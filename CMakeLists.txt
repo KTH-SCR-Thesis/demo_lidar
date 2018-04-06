@@ -4,41 +4,35 @@ project(demo_lidar)
 set(CMAKE_BUILD_TYPE Release)
 
 find_package(catkin REQUIRED COMPONENTS
+  cv_bridge
   roscpp
   sensor_msgs
   std_msgs
-  cv_bridge
-  pcl_ros
+  tf
+  pcl_catkin
+  isam
 )
 
 find_package(Eigen3 REQUIRED)
-find_package(PCL REQUIRED)
-set(OpenCV_DIR $ENV{OPENCV2_INSTALL_DIR})
 find_package(OpenCV 2 REQUIRED)
+
+catkin_package(
+  CATKIN_DEPENDS roscpp std_msgs sensor_msgs cv_bridge tf pcl_catkin isam
+  DEPENDS EIGEN3 OpenCV
+)
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
-  ${PCL_INCLUDE_DIRS}
 )
+
+message(${catkin_INCLUDE_DIRS})
 
 LIST(APPEND LINK_LIBS
   ${catkin_LIBRARIES}
-  ${PCL_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )
-
-catkin_package(
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs cv_bridge pcl_ros
-  DEPENDS EIGEN3 PCL OpenCV
-)
-
-SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-include_directories("${PROJECT_SOURCE_DIR}/include")
-
-add_subdirectory(isamlib)
-link_libraries(isamlib)
 
 
 add_executable(featureTracking_lidar src/featureTracking.cpp)
